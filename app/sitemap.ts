@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { countryScholarshipsMap } from "@/data/countryScholarships";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://abroadsimplified.com";
+  const baseUrl = "https://scholarship.abroadsimplified.com";
 
   // Base pages
   const routes: MetadataRoute.Sitemap = [
@@ -11,6 +11,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/finder`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
     },
   ];
 

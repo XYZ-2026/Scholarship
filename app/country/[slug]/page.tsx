@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = `Fully Funded Scholarships in ${country.name} (2025-2026) — Abroad Simplified`;
   const description = `Discover ${country.scholarshipCount} verified scholarships in ${country.name}. Apply for fully funded government, university, and merit-based grants for Master's, PhD, and Bachelor's degrees.`;
-  const url = `https://abroadsimplified.com/country/${slug}`;
+  const url = `https://scholarship.abroadsimplified.com/country/${slug}`;
 
   return {
     title,
@@ -100,19 +100,19 @@ export default async function CountryPage({ params }: Props) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://abroadsimplified.com"
+        "item": "https://scholarship.abroadsimplified.com"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Countries",
-        "item": "https://abroadsimplified.com/#countries"
+        "item": "https://scholarship.abroadsimplified.com/#countries"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": country.name,
-        "item": `https://abroadsimplified.com/country/${slug}`
+        "item": `https://scholarship.abroadsimplified.com/country/${slug}`
       }
     ]
   };

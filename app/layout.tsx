@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://scholarship.abroadsimplified.com"),
   title: "Scholarships & Financial Aid — Abroad Simplified",
   description:
     "Discover fully-funded scholarships, grants, and financial aid opportunities for international students. Abroad Simplified helps you find and apply for the best study-abroad funding worldwide.",

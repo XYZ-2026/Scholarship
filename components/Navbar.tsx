@@ -32,11 +32,11 @@ export default function Navbar() {
   }, [mobileMenuOpen]);
 
   const navItems = [
-    { label: "Home", href: "#" },
-    { label: "Scholarships", href: "#scholarships" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Success Stories", href: "#testimonials" },
-    { label: "FAQ", href: "#faq" },
+    { label: "Home", href: "/" },
+    { label: "Find Scholarship", href: "/finder" },
+    { label: "Scholarships", href: "/#scholarships" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "FAQ", href: "/#faq" },
   ];
 
   return (
@@ -75,37 +75,37 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center flex-1 justify-center mx-2 xl:mx-0 xl:absolute xl:left-1/2 xl:-translate-x-1/2">
           <div className="flex items-center gap-1 xl:gap-2 bg-white/80 border border-[#E7E1DD] rounded-full px-2 py-1.5 xl:px-3 xl:py-2 shadow-sm">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.label}
                 href={item.href}
                 className="px-3 xl:px-5 h-[36px] xl:h-[42px] rounded-full flex items-center justify-center text-[13px] xl:text-[15px] whitespace-nowrap transition-all duration-300 font-medium text-[#5F5F5F] hover:bg-[#690B1B] hover:text-white"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
 
         {/* RIGHT - CTA */}
         <div className="flex items-center gap-4">
-          <a
-            href="#scholarships"
+          <Link
+            href="/finder"
             className="hidden lg:flex text-[15px] font-medium text-[#5B5B5B] hover:text-[#690B1B] transition-colors cursor-pointer"
           >
-            Sign in
-          </a>
+            Find Aid
+          </Link>
 
-          <a
-            href="#scholarships"
+          <Link
+            href="/finder"
             className="group relative h-[42px] sm:h-[50px] px-4 sm:px-7 rounded-full overflow-hidden bg-[#690B1B] text-white text-[13.5px] sm:text-[15px] font-bold shadow-[0_10px_25px_rgba(105,11,27,0.22)] hover:scale-[1.02] transition-all hidden lg:flex items-center justify-center cursor-pointer"
           >
             {/* SHINE */}
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000" />
             <span className="relative flex items-center gap-1.5 sm:gap-2">
-              Explore Scholarships
+              Scholarship Finder
               <span className="transition-transform group-hover:translate-x-1">→</span>
             </span>
-          </a>
+          </Link>
 
           {/* MOBILE HAMBURGER */}
           <button
@@ -134,7 +134,7 @@ export default function Navbar() {
             Navigation
           </span>
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.label}
               href={item.href}
               onClick={() => setMobileMenuOpen(false)}
@@ -142,19 +142,19 @@ export default function Navbar() {
             >
               <span className="text-[15px]">{item.label}</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="opacity-60 text-[#A5A5A5]"><path d="M9 6l6 6-6 6" /></svg>
-            </a>
+            </Link>
           ))}
         </div>
 
         <div className="mt-8">
           <div className="bg-white/80 border border-[#E7E2DE] rounded-[24px] p-5 shadow-sm backdrop-blur-md flex flex-col gap-3">
-            <a
-              href="#scholarships"
+            <Link
+              href="/finder"
               onClick={() => setMobileMenuOpen(false)}
               className="h-[48px] rounded-xl bg-[#690B1B] text-white text-[13.5px] font-bold flex items-center justify-center gap-2 hover:bg-[#7A1022] shadow-[0_4px_12px_rgba(105,11,27,0.15)] transition-all"
             >
-              Explore Scholarships →
-            </a>
+              Scholarship Finder →
+            </Link>
             <a
               href="#"
               onClick={() => setMobileMenuOpen(false)}

@@ -27,19 +27,19 @@ export default function Footer() {
             </div>
             <div className="space-y-4">
               {[
-                { label: "Merit-Based", href: "#" },
-                { label: "Need-Based", href: "#" },
-                { label: "Fully Funded", href: "#" },
-                { label: "Country Specific", href: "#" },
-                { label: "Scholarship Finder", href: "#" },
+                { label: "Merit-Based", href: "/#scholarships" },
+                { label: "Need-Based", href: "/#scholarships" },
+                { label: "Fully Funded", href: "/#scholarships" },
+                { label: "Country Specific", href: "/#destinations" },
+                { label: "Scholarship Finder", href: "/finder" },
               ].map((item) => (
-                <a
+                <Link
                   key={item.label}
                   href={item.href}
                   className="block text-[#6B6F78] text-[15px] hover:text-white transition cursor-pointer"
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

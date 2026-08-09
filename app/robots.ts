@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/_next/"],
     },
-    sitemap: "https://abroadsimplified.com/sitemap.xml",
+    sitemap: "https://scholarship.abroadsimplified.com/sitemap.xml",
   };
 }
