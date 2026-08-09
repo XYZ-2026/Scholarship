@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Only enable standalone output for Docker builds (Vercel uses its native serverless output)
-  ...(process.env.BUILD_STANDALONE === "true" ? { output: "standalone" } : {}),
+  // Explicitly disable standalone output on Vercel to allow Vercel's native serverless builder to construct page traces
+  output: process.env.VERCEL ? undefined : "standalone",
   images: {
     remotePatterns: [
       {
