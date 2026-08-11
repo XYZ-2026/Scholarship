@@ -37,7 +37,6 @@ export default function Navbar() {
     { label: "Scholarships", href: "/#scholarships" },
     { label: "How It Works", href: "/#how-it-works" },
     { label: "FAQ", href: "/#faq" },
-    { label: "Terms & Privacy", href: "/terms" },
   ];
 
   return (
