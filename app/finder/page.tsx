@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScholarshipFinderWizard from "@/components/ScholarshipFinderWizard";
+import { getAllWixScholarships } from "@/lib/wixCms";
 
 export const metadata: Metadata = {
   title: "Interactive Scholarship Finder & Profile Matcher — Abroad Simplified",
@@ -30,7 +31,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FinderPage() {
+export default async function FinderPage() {
+  const cmsScholarships = await getAllWixScholarships();
+
   return (
     <div className="min-h-screen bg-[#F6F4F2] text-[#111111] font-[Poppins] flex flex-col justify-between selection:bg-[#690B1B] selection:text-white">
       <div>
@@ -45,7 +48,7 @@ export default function FinderPage() {
             <div className="inline-flex items-center gap-2 bg-white border border-[#E7E2DE] rounded-full px-4 py-1.5 mb-5 shadow-xs">
               <span className="text-[14px]">🎯</span>
               <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#690B1B]">
-                Personalized Scholarship Matcher
+                Personalized Profile Matcher ({cmsScholarships.length} Awards)
               </span>
             </div>
 
@@ -54,14 +57,14 @@ export default function FinderPage() {
             </h1>
 
             <p className="mt-4 text-[15px] sm:text-[16.5px] leading-[1.8] text-[#666] max-w-2xl mx-auto">
-              Tell us your academic goals and preferences. Our intelligent matching engine will scan verified international grants and display customized scholarship cards with compatibility scores.
+              Tell us your academic goals and preferences. Our intelligent matching engine scans verified international grants and displays customized scholarship cards with compatibility scores.
             </p>
           </div>
         </header>
 
         {/* Wizard Container */}
-        <main>
-          <ScholarshipFinderWizard />
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <ScholarshipFinderWizard initialScholarships={cmsScholarships} />
         </main>
       </div>
 

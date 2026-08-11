@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { countryScholarshipsMap } from "@/data/countryScholarships";
+import { getWixCountryCounts } from "@/lib/wixCms";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://scholarship.abroadsimplified.com";
 
   // Base pages
@@ -20,8 +21,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
+  const cmsCounts = await getWixCountryCounts();
+  const allSlugs = Array.from(new Set([...Object.keys(countryScholarshipsMap), ...Object.keys(cmsCounts)]));
+
   // Country dynamic pages
-  const countryRoutes: MetadataRoute.Sitemap = Object.keys(countryScholarshipsMap).map((slug) => ({
+  const countryRoutes: MetadataRoute.Sitemap = allSlugs.map((slug) => ({
     url: `${baseUrl}/country/${slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly",

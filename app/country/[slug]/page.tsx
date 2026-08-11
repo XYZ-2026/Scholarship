@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CountryScholarshipExplorer from "@/components/CountryScholarshipExplorer";
 import { countryScholarshipsMap } from "@/data/countryScholarships";
+import { getWixScholarshipsByCountry, getWixDeadlines } from "@/lib/wixCms";
 import type { Metadata } from "next";
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   DYNAMIC METADATA (SSR SEO)
+   DYNAMIC METADATA (SSR SEO WITH WIX CMS)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -26,8 +27,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const wixScholarships = await getWixScholarshipsByCountry(slug);
+  const countDisplay = wixScholarships.length > 0 ? `${wixScholarships.length}+ verified` : country.scholarshipCount;
+
   const title = `Fully Funded Scholarships in ${country.name} (2025-2026) — Abroad Simplified`;
-  const description = `Discover ${country.scholarshipCount} verified scholarships in ${country.name}. Apply for fully funded government, university, and merit-based grants for Master's, PhD, and Bachelor's degrees.`;
+  const description = `Discover ${countDisplay} scholarships in ${country.name}. Apply for fully funded government, university, and merit-based grants for Master's, PhD, and Bachelor's degrees.`;
   const url = `https://scholarship.abroadsimplified.com/country/${slug}`;
 
   return {
@@ -64,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SERVER COMPONENT (100% SSR)
+   SERVER COMPONENT (100% SSR WITH WIX CMS)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 export default async function CountryPage({ params }: Props) {
@@ -90,6 +94,27 @@ export default async function CountryPage({ params }: Props) {
       </div>
     );
   }
+
+  // Fetch live CMS scholarships and deadlines
+  const wixScholarships = await getWixScholarshipsByCountry(slug);
+  const wixDeadlines = await getWixDeadlines(slug);
+
+  const scholarshipsList = wixScholarships.length > 0
+    ? wixScholarships.map((s, idx) => ({
+        id: typeof s.id === "number" ? s.id : idx + 1,
+        name: s.name,
+        funding: s.funding,
+        deadline: s.deadline,
+        amount: s.amount,
+        fields: s.fields,
+        level: s.level,
+        tag: s.tag,
+        color: s.color,
+        overview: s.overview,
+        highlights: s.highlights,
+        url: s.url,
+      }))
+    : country.scholarships;
 
   // JSON-LD Breadcrumbs
   const breadcrumbSchema = {
@@ -123,7 +148,7 @@ export default async function CountryPage({ params }: Props) {
     "@type": "ItemList",
     "name": `Scholarships in ${country.name}`,
     "description": country.description,
-    "itemListElement": country.scholarships.map((s, index) => ({
+    "itemListElement": scholarshipsList.map((s, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "item": {
@@ -178,23 +203,16 @@ export default async function CountryPage({ params }: Props) {
               <span className="text-white/90">{country.name}</span>
             </nav>
 
-            {/* Country info */}
-            <div className="flex items-end gap-5 animate-fadeInUp">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[40px] sm:text-[48px] drop-shadow-lg" aria-label={`${country.name} flag`}>{country.flag}</span>
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-3.5 py-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C4A15F]" />
-                    <span className="text-[11px] text-[#C4A15F] font-bold tracking-[0.12em] uppercase">{country.scholarshipCount} Scholarships</span>
-                  </div>
-                </div>
-                <h1 className="text-[32px] sm:text-[42px] md:text-[52px] font-extrabold text-white tracking-[-0.04em] leading-[1.08] drop-shadow-lg">
-                  Study in {country.name} Scholarships
-                </h1>
-                <p className="mt-3 text-[14px] sm:text-[15px] text-white/60 leading-[1.8] max-w-2xl">
-                  {country.description}
-                </p>
+            <div className="animate-fadeInUp">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-[32px] sm:text-[40px] drop-shadow-md" aria-label={`${country.name} flag`}>{country.flag}</span>
               </div>
+              <h1 className="text-[32px] sm:text-[46px] md:text-[54px] font-extrabold text-white tracking-[-0.03em] leading-[1.08]">
+                Scholarships in {country.name}
+              </h1>
+              <p className="mt-3 text-[14px] sm:text-[15.5px] text-white/80 max-w-2xl font-normal leading-[1.7]">
+                {country.description}
+              </p>
             </div>
           </div>
         </section>

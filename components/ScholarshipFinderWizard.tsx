@@ -58,7 +58,11 @@ const EXTRA_TAGS = [
   "University",
 ];
 
-export default function ScholarshipFinderWizard() {
+interface WizardProps {
+  initialScholarships?: any[];
+}
+
+export default function ScholarshipFinderWizard({ initialScholarships }: WizardProps = {}) {
   const [step, setStep] = useState<number>(1);
   const [selectedLevels, setSelectedLevels] = useState<string[]>(["Masters"]);
   const [selectedFields, setSelectedFields] = useState<string[]>(["All Fields"]);
@@ -120,6 +124,90 @@ export default function ScholarshipFinderWizard() {
   // Match Scoring Algorithm
   const matchedScholarships = useMemo(() => {
     const allMatches: MatchedScholarship[] = [];
+
+    // If CMS scholarships passed, iterate directly over CMS items
+    if (initialScholarships && initialScholarships.length > 0) {
+      initialScholarships.forEach((s, idx) => {
+        const countrySlug = s.countrySlug || "global";
+        const isCountryMatch =
+          selectedCountries.includes("all") || selectedCountries.includes(countrySlug);
+
+        let score = 50;
+        const reasons: string[] = [];
+
+        // 1. Level Match
+        const levelMatch = selectedLevels.some(
+          (lvl) => (s.level || "").toLowerCase().includes(lvl.toLowerCase()) || lvl === "Non-Degree"
+        );
+        if (levelMatch) {
+          score += 25;
+          reasons.push(`Degree Level (${s.level})`);
+        }
+
+        // 2. Country Match
+        if (isCountryMatch) {
+          score += 20;
+          if (!selectedCountries.includes("all")) {
+            reasons.push(`Target Destination (${s.country})`);
+          }
+        } else {
+          score -= 30;
+        }
+
+        // 3. Field Match
+        const isAllFieldsUser = selectedFields.includes("All Fields");
+        const fieldsArr = Array.isArray(s.fields) ? s.fields : ["All Fields"];
+        const sIsAllFields = fieldsArr.some((f: string) => f.toLowerCase().includes("all fields"));
+
+        if (isAllFieldsUser || sIsAllFields) {
+          score += 15;
+          reasons.push("Field Alignment");
+        } else {
+          const fieldMatch = selectedFields.some((userF) =>
+            fieldsArr.some(
+              (sf: string) =>
+                sf.toLowerCase().includes(userF.toLowerCase()) ||
+                userF.toLowerCase().includes(sf.toLowerCase())
+            )
+          );
+          if (fieldMatch) {
+            score += 20;
+            reasons.push("Specific Discipline Match");
+          }
+        }
+
+        // 4. Funding Match
+        if (fundingPref === "All") {
+          score += 10;
+        } else if (s.funding === fundingPref) {
+          score += 20;
+          reasons.push(`${fundingPref} Financial Aid`);
+        }
+
+        const finalScore = Math.max(35, Math.min(99, score));
+
+        allMatches.push({
+          id: typeof s.id === "number" ? s.id : idx + 1,
+          name: s.name,
+          funding: s.funding,
+          deadline: s.deadline,
+          amount: s.amount,
+          fields: fieldsArr,
+          level: s.level,
+          tag: s.tag,
+          color: s.color || "#690B1B",
+          overview: s.overview || "",
+          highlights: Array.isArray(s.highlights) ? s.highlights : [],
+          url: s.url || "#",
+          countryName: s.country,
+          countryFlag: s.countryFlag || "🌐",
+          countrySlug,
+          matchScore: finalScore,
+          matchReasons: reasons,
+        });
+      });
+      return allMatches;
+    }
 
     Object.entries(countryScholarshipsMap).forEach(([countrySlug, country]) => {
       // Check country match

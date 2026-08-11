@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomeInteractiveScholarships from "@/components/HomeInteractiveScholarships";
 import FaqAccordion from "@/components/FaqAccordion";
+import { getAllWixScholarships, getWixCountryCounts } from "@/lib/wixCms";
 import type { Metadata } from "next";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -41,48 +42,15 @@ export const metadata: Metadata = {
 };
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   DATA
+   DATA CONFIG & FALLBACKS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-const scholarships = [
-  {
-    id: 1, name: "Chevening Scholarship", country: "United Kingdom", flag: "🇬🇧",
-    funding: "Fully Funded", deadline: "Nov 2025", amount: "Full tuition + living",
-    fields: ["All Fields"], level: "Masters", tag: "Most Popular", color: "#690B1B",
-  },
-  {
-    id: 2, name: "Fulbright Program", country: "United States", flag: "🇺🇸",
-    funding: "Fully Funded", deadline: "Oct 2025", amount: "$40,000+ per year",
-    fields: ["All Fields"], level: "Masters / PhD", tag: "Prestigious", color: "#1B3A5C",
-  },
-  {
-    id: 3, name: "DAAD Scholarship", country: "Germany", flag: "🇩🇪",
-    funding: "Fully Funded", deadline: "Sep 2025", amount: "€934–1,300/month",
-    fields: ["All Fields"], level: "Masters / PhD", tag: "Top Rated", color: "#2D5016",
-  },
-  {
-    id: 4, name: "Erasmus Mundus", country: "Europe", flag: "🇪🇺",
-    funding: "Fully Funded", deadline: "Jan 2026", amount: "€1,400/mo + tuition",
-    fields: ["Joint Programs"], level: "Masters", tag: "EU Flagship", color: "#1A3B6E",
-  },
-  {
-    id: 5, name: "Australia Awards", country: "Australia", flag: "🇦🇺",
-    funding: "Fully Funded", deadline: "Apr 2026", amount: "Full tuition + stipend",
-    fields: ["Development Focus"], level: "Masters / PhD", tag: "Government", color: "#6B3A0A",
-  },
-  {
-    id: 6, name: "Gates Cambridge", country: "United Kingdom", flag: "🇬🇧",
-    funding: "Fully Funded", deadline: "Dec 2025", amount: "Full cost of study",
-    fields: ["All Fields"], level: "PhD / Masters", tag: "Elite", color: "#3D0B69",
-  },
-];
 
 const categories = ["All", "Fully Funded", "Masters", "PhD", "Europe", "USA"];
 
 const steps = [
   {
     num: "01", title: "Discover Opportunities",
-    desc: "Browse our curated database of 2,500+ scholarships across 80+ countries, filtered by your profile.",
+    desc: "Browse our curated database of scholarships across 80+ countries, filtered by your profile.",
     icon: (<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>),
   },
   {
@@ -120,23 +88,23 @@ const testimonials = [
   },
 ];
 
-const faqs = [
-  { q: "Is Abroad Simplified's scholarship finder free?", a: "Yes! Our scholarship discovery tool is completely free. You can browse, filter, and save scholarships without any charges. Premium features like AI-powered SOP reviews and mock interviews are available with a subscription." },
+const defaultFaqs = [
+  { q: "Is Abroad Simplified's scholarship finder free?", a: "Yes! Our scholarship discovery tool is completely free. You can browse, filter, and save scholarships without any charges." },
   { q: "How many scholarships are in the database?", a: "We maintain a curated database of over 2,500 active scholarships from 80+ countries. Our team updates the database weekly to ensure deadlines and eligibility criteria are always accurate." },
-  { q: "Can I get help with my scholarship application?", a: "Absolutely. Our AI-powered tools help you write SOPs, prepare for interviews, and organize documents. You also get access to mentors who are past scholarship winners from top programs." },
+  { q: "Can I get help with my scholarship application?", a: "Absolutely. Our AI-powered tools help you write SOPs, prepare for interviews, and organize documents." },
   { q: "What types of scholarships do you cover?", a: "We cover fully funded, partially funded, merit-based, need-based, government-sponsored, university-specific, and organization-funded scholarships for undergraduate, masters, and PhD levels." },
-  { q: "How does the AI profile matching work?", a: "You create a profile with your academic background, test scores, research interests, and preferred countries. Our AI analyzes your profile against scholarship eligibility criteria and ranks the best matches for you." },
+  { q: "How does the AI profile matching work?", a: "You create a profile with your academic background, test scores, research interests, and preferred countries. Our AI analyzes your profile against scholarship eligibility criteria." },
 ];
 
-const popularCountries = [
-  { flag: "🇬🇧", name: "United Kingdom", count: "420+", label: "scholarships", slug: "united-kingdom", image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80" },
-  { flag: "🇺🇸", name: "United States", count: "380+", label: "scholarships", slug: "united-states", image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80" },
-  { flag: "🇩🇪", name: "Germany", count: "310+", label: "scholarships", slug: "germany", image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80" },
-  { flag: "🇨🇦", name: "Canada", count: "280+", label: "scholarships", slug: "canada", image: "https://images.unsplash.com/photo-1517935706615-2717063c2225?w=800&q=80" },
-  { flag: "🇦🇺", name: "Australia", count: "240+", label: "scholarships", slug: "australia", image: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=800&q=80" },
-  { flag: "🇳🇱", name: "Netherlands", count: "180+", label: "scholarships", slug: "netherlands", image: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&q=80" },
-  { flag: "🇸🇪", name: "Sweden", count: "150+", label: "scholarships", slug: "sweden", image: "https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=800&q=80" },
-  { flag: "🇯🇵", name: "Japan", count: "130+", label: "scholarships", slug: "japan", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80" },
+const basePopularCountries = [
+  { code: "GB", flag: "🇬🇧", name: "United Kingdom", slug: "united-kingdom", image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80" },
+  { code: "US", flag: "🇺🇸", name: "United States", slug: "united-states", image: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80" },
+  { code: "DE", flag: "🇩🇪", name: "Germany", slug: "germany", image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80" },
+  { code: "CA", flag: "🇨🇦", name: "Canada", slug: "canada", image: "https://images.unsplash.com/photo-1517935706615-2717063c2225?w=800&q=80" },
+  { code: "AU", flag: "🇦🇺", name: "Australia", slug: "australia", image: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=800&q=80" },
+  { code: "NL", flag: "🇳🇱", name: "Netherlands", slug: "netherlands", image: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&q=80" },
+  { code: "SE", flag: "🇸🇪", name: "Sweden", slug: "sweden", image: "https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=800&q=80" },
+  { code: "JP", flag: "🇯🇵", name: "Japan", slug: "japan", image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80" },
 ];
 
 const tools = [
@@ -173,10 +141,44 @@ const tools = [
 ];
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SERVER COMPONENT (100% SSR)
+   SERVER COMPONENT (100% SSR WITH WIX CMS)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-export default function ScholarshipLanding() {
+export default async function ScholarshipLanding() {
+  // Fetch live CMS data
+  const cmsScholarships = await getAllWixScholarships();
+  const countryCounts = await getWixCountryCounts();
+  const faqs = defaultFaqs;
+
+  // Build live country cards based on exact scholarship counts
+  const popularCountries = basePopularCountries.map((c) => {
+    const count = countryCounts[c.slug] || 0;
+    return {
+      ...c,
+      count: count > 0 ? `${count} scholarship${count !== 1 ? "s" : ""}` : "Explore",
+      label: "verified awards",
+    };
+  });
+
+  // Map CMS scholarships for HomeInteractiveScholarships
+  const interactiveScholarships = cmsScholarships.slice(0, 12).map((s, idx) => ({
+    id: idx + 1,
+    name: s.name,
+    country: s.country,
+    countrySlug: s.countrySlug || s.country.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    flag: s.countryFlag || "🌐",
+    funding: s.funding || "Fully Funded",
+    deadline: s.deadline || "Open",
+    amount: s.amount || "Full tuition + allowance",
+    fields: Array.isArray(s.fields) ? s.fields : ["All Fields"],
+    level: s.level || "Masters",
+    tag: s.tag || "Scholarship",
+    color: s.color || "#690B1B",
+    overview: s.overview || "",
+    highlights: Array.isArray(s.highlights) ? s.highlights : [],
+    url: s.url || "#",
+  }));
+
   // JSON-LD Schemas for Search Engines
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -205,7 +207,7 @@ export default function ScholarshipLanding() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map(f => ({
+    "mainEntity": faqs.map((f: any) => ({
       "@type": "Question",
       "name": f.q,
       "acceptedAnswer": {
@@ -218,7 +220,7 @@ export default function ScholarshipLanding() {
   const scholarshipListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "itemListElement": scholarships.map((s, index) => ({
+    "itemListElement": cmsScholarships.slice(0, 10).map((s, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "item": {
@@ -229,6 +231,7 @@ export default function ScholarshipLanding() {
       }
     }))
   };
+
 
   return (
     <div className="bg-[#F6F4F2] text-[#111111] overflow-x-hidden font-[Poppins]">
@@ -452,9 +455,9 @@ export default function ScholarshipLanding() {
 
                   {/* Top badge */}
                   <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3">
-                    <div className="flex items-center gap-1 sm:gap-1.5 bg-white/90 backdrop-blur-md rounded-full px-2 py-0.5 sm:px-2.5 sm:py-1 shadow-xs">
-                      <span className="text-[12px] sm:text-[14px]" aria-label={`${c.name} flag`}>{c.flag}</span>
-                      <span className="text-[9.5px] sm:text-[10px] font-bold text-[#690B1B]">{c.count}</span>
+                    <div className="inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-md rounded-full px-3 py-1.5 shadow-sm leading-none border border-white/40">
+                      <span className="text-[11px] font-extrabold text-[#555] tracking-wide">{c.code}</span>
+                      <span className="text-[11px] font-extrabold text-[#690B1B]">{c.count}</span>
                     </div>
                   </div>
 
@@ -499,7 +502,7 @@ export default function ScholarshipLanding() {
             </div>
 
             {/* Interactive Filter Pills & Cards */}
-            <HomeInteractiveScholarships scholarships={scholarships} categories={categories} />
+            <HomeInteractiveScholarships scholarships={interactiveScholarships} categories={categories} />
 
             {/* View All */}
             <div className="text-center mt-10 sm:mt-12">
