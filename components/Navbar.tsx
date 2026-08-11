@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, userData, logout, setShowAuthModal, setAuthModalView } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -63,9 +65,9 @@ export default function Navbar() {
             <div className="text-[14px] min-[375px]:text-[16px] sm:text-[18px] xl:text-[20px] font-bold tracking-[-0.04em] leading-none text-[#111111] whitespace-nowrap">
               Abroad Simplified
             </div>
-            <div className="mt-0.5 sm:mt-1 hidden xl:flex items-center">
+            <div className="mt-0.5 sm:mt-1 flex items-center">
               <span className="text-[8.5px] min-[375px]:text-[10px] sm:text-[11px] font-semibold text-[#5B5B5B] whitespace-nowrap">
-                Scholarships & Financial Aid
+                Think Beyond Your Boundaries
               </span>
             </div>
           </div>
@@ -86,26 +88,48 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* RIGHT - CTA */}
+        {/* RIGHT - Sign In & Sign Up Auth Buttons */}
         <div className="flex items-center gap-4">
-          <Link
-            href="/finder"
-            className="hidden lg:flex text-[15px] font-medium text-[#5B5B5B] hover:text-[#690B1B] transition-colors cursor-pointer"
-          >
-            Find Aid
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline-block text-[13px] font-bold text-[#111]">
+                {userData?.fullName || user.displayName || user.email?.split("@")[0]}
+              </span>
+              <button
+                onClick={() => logout()}
+                className="h-[40px] px-4 rounded-full border border-[#E7E2DE] bg-white text-[#690B1B] text-[13px] font-bold hover:bg-[#690B1B] hover:text-white transition-all cursor-pointer shadow-xs"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={() => {
+                  setAuthModalView("login");
+                  setShowAuthModal(true);
+                }}
+                className="hidden lg:flex text-[14.5px] font-bold text-[#555] hover:text-[#690B1B] transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
 
-          <Link
-            href="/finder"
-            className="group relative h-[42px] sm:h-[50px] px-4 sm:px-7 rounded-full overflow-hidden bg-[#690B1B] text-white text-[13.5px] sm:text-[15px] font-bold shadow-[0_10px_25px_rgba(105,11,27,0.22)] hover:scale-[1.02] transition-all hidden lg:flex items-center justify-center cursor-pointer"
-          >
-            {/* SHINE */}
-            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000" />
-            <span className="relative flex items-center gap-1.5 sm:gap-2">
-              Scholarship Finder
-              <span className="transition-transform group-hover:translate-x-1">→</span>
-            </span>
-          </Link>
+              <button
+                onClick={() => {
+                  setAuthModalView("register");
+                  setShowAuthModal(true);
+                }}
+                className="group relative h-[42px] sm:h-[48px] px-5 sm:px-7 rounded-full overflow-hidden bg-[#690B1B] text-white text-[13.5px] sm:text-[14.5px] font-bold shadow-[0_10px_25px_rgba(105,11,27,0.22)] hover:scale-[1.02] transition-all hidden lg:flex items-center justify-center cursor-pointer"
+              >
+                {/* SHINE */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000" />
+                <span className="relative flex items-center gap-1.5 sm:gap-2">
+                  Sign Up
+                  <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                </span>
+              </button>
+            </>
+          )}
 
           {/* MOBILE HAMBURGER */}
           <button
@@ -148,20 +172,37 @@ export default function Navbar() {
 
         <div className="mt-8">
           <div className="bg-white/80 border border-[#E7E2DE] rounded-[24px] p-5 shadow-sm backdrop-blur-md flex flex-col gap-3">
-            <Link
-              href="/finder"
-              onClick={() => setMobileMenuOpen(false)}
-              className="h-[48px] rounded-xl bg-[#690B1B] text-white text-[13.5px] font-bold flex items-center justify-center gap-2 hover:bg-[#7A1022] shadow-[0_4px_12px_rgba(105,11,27,0.15)] transition-all"
-            >
-              Scholarship Finder →
-            </Link>
-            <a
-              href="#"
-              onClick={() => setMobileMenuOpen(false)}
-              className="h-[48px] rounded-xl border border-[#E7E2DE] bg-white text-[#444] text-[13.5px] font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 transition-all cursor-pointer"
-            >
-              Sign in
-            </a>
+            {user ? (
+              <button
+                onClick={() => { logout(); setMobileMenuOpen(false); }}
+                className="h-[48px] rounded-xl bg-[#690B1B] text-white text-[13.5px] font-bold flex items-center justify-center gap-2 hover:bg-[#7A1022] transition-all"
+              >
+                Sign Out ({userData?.fullName || user.displayName || user.email?.split("@")[0]})
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setAuthModalView("register");
+                    setShowAuthModal(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="h-[48px] rounded-xl bg-[#690B1B] text-white text-[13.5px] font-bold flex items-center justify-center gap-2 hover:bg-[#7A1022] shadow-[0_4px_12px_rgba(105,11,27,0.15)] transition-all cursor-pointer"
+                >
+                  Sign Up →
+                </button>
+                <button
+                  onClick={() => {
+                    setAuthModalView("login");
+                    setShowAuthModal(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="h-[48px] rounded-xl border border-[#E7E2DE] bg-white text-[#444] text-[13.5px] font-bold flex items-center justify-center gap-2 hover:bg-neutral-50 transition-all cursor-pointer"
+                >
+                  Sign In
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

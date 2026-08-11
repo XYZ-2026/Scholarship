@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
+import AuthModal from "@/components/AuthModal";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://scholarship.abroadsimplified.com"),
   title: "Scholarships & Financial Aid — Abroad Simplified",
   description:
     "Discover fully-funded scholarships, grants, and financial aid opportunities for international students. Abroad Simplified helps you find and apply for the best study-abroad funding worldwide.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/icon.png",
+    apple: "/logo-icon.png",
+  },
   keywords: [
     "scholarships abroad",
     "financial aid international students",
@@ -37,7 +44,7 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" className="h-full antialiased">
       <head>
@@ -49,7 +56,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="bg-[#F6F4F2] text-[#111111] min-h-full flex flex-col font-[Poppins] overflow-x-hidden">
-        {children}
+        <AuthProvider>
+          {children}
+          <AuthModal />
+        </AuthProvider>
       </body>
     </html>
   );
