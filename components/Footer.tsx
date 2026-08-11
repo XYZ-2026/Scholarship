@@ -100,8 +100,8 @@ export default function Footer() {
             © 2025 Abroad Simplified. All rights reserved.
           </div>
           <div className="flex items-center gap-6 text-[#5E6168] text-[14px]">
-            <a href="#" className="hover:text-white transition cursor-pointer">Privacy</a>
-            <a href="#" className="hover:text-white transition cursor-pointer">Terms</a>
+            <Link href="/privacy" className="hover:text-white transition cursor-pointer">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition cursor-pointer">Terms</Link>
           </div>
         </div>
       </div>
